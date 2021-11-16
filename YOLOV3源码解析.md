@@ -158,6 +158,64 @@ def forward(self, x, targets=None, img_dim=None):
 
 输出值：注意最后一个类别是使用的**sigmoid函数**而不是softmax。预测80个类别中的每一个是否属于。
 
+预测出来的x、y是相对位置。
+
+![image-20211116204452659](https://ricky1999.oss-cn-beijing.aliyuncs.com/imgs/image-20211116204452659.png)
+
+黑点相对于绿色点的相对位置。
+
+![image-20211116204543122](https://ricky1999.oss-cn-beijing.aliyuncs.com/imgs/image-20211116204543122.png)
+
+将相对位置转换为绝对位置。
+
+![image-20211116210554824](https://ricky1999.oss-cn-beijing.aliyuncs.com/imgs/image-20211116210554824.png)
+
+最后将boxes还原到原始图中。
+
+### 损失计算
+
+![image-20211116211040532](https://ricky1999.oss-cn-beijing.aliyuncs.com/imgs/image-20211116211040532.png)
+
+![image-20211116212646783](https://ricky1999.oss-cn-beijing.aliyuncs.com/imgs/image-20211116212646783.png)
+
+```python
+考虑前景和背景
+obj_mask = ByteTensor(nB, nA, nG, nG).fill_(0)  # obj，anchor包含物体, 即为1，默认为0 考虑前景
+noobj_mask = ByteTensor(nB, nA, nG, nG).fill_(1) # noobj, anchor不包含物体, 则为1，默认为1 考虑背景
+```
+
+```python
+# Set noobj mask to zero where iou exceeds ignore threshold
+for i, anchor_ious in enumerate(ious.t()): # IOU超过了指定的阈值就相当于有物体了
+    noobj_mask[b[i], anchor_ious > ignore_thres, gj[i], gi[i]] = 0
+```
+
+超过阈值，也相当于有物体。
+
+![image-20211116222512011](https://ricky1999.oss-cn-beijing.aliyuncs.com/imgs/image-20211116222512011.png)
+
+
+
+反向传播：自动求解
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
