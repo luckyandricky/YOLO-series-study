@@ -194,9 +194,22 @@ for i, anchor_ious in enumerate(ious.t()): # IOU超过了指定的阈值就相�
 
 ![image-20211116222512011](https://ricky1999.oss-cn-beijing.aliyuncs.com/imgs/image-20211116222512011.png)
 
+计算与真实值的损失：
+x[obj_mask], tx[obj_mask] 只计算有目标的。所以要用obj_mask中为1的就表示有物体。
+
+![image-20211121204432091](C:\Users\赵宪锐\AppData\Roaming\Typora\typora-user-images\image-20211121204432091.png)
+
+前景损失和背景损失直接用bce_loss计算就可以。取值范围已经是0-1了直接用bce_loss
+
+```python
+self.bce_loss(pred_conf[obj_mask], tconf[obj_mask]) 
+```
+
+最麻烦的就是标签格式的转换。
 
 
-反向传播：自动求解
+
+### 反向传播：自动求解
 
 
 
